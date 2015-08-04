@@ -13,8 +13,8 @@ import android.preference.PreferenceManager;
 public class SettingsActivity extends PreferenceActivity implements Preference.OnPreferenceChangeListener{
 
     @Override
-    public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.pref_general);
         bindPreferencesSummaryToValue(findPreference(getString(R.string.pref_sort_key)));
     }
@@ -30,6 +30,8 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         String stringValue = newValue.toString();
+        MainActivity.prefChanged = true;
+
         if (preference instanceof ListPreference) {
             ListPreference listPreference = (ListPreference)preference;
             int prefIndex = listPreference.findIndexOfValue(stringValue);

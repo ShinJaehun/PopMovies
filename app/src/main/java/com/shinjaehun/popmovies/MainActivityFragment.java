@@ -1,12 +1,17 @@
 package com.shinjaehun.popmovies;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
@@ -44,44 +49,38 @@ public class MainActivityFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setHasOptionsMenu(true);
-    }
-/*
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_main_fragment, menu);
+        //setHasOptionsMenu(true);
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        mSortOrder = mPrefs.getString("sortBy", "popularity");
+        Log.d(LOG_TAG, "mSortOrder onCreateView: " + mSortOrder.toString());
+        new FetchMovieTask().execute(mSortOrder);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_settings) {
-            startActivity(new Intent(getActivity(), SettingsActivity.class));
-            return true;
+    public void onResume() {
+        super.onResume();
+        if (MainActivity.prefChanged) {
+            //mPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            mSortOrder = mPrefs.getString("sortBy", "popularity");
+            Log.d(LOG_TAG, "mSortOrder onResume: " + mSortOrder.toString());
+            new FetchMovieTask().execute(mSortOrder);
+            movieAdapter.clear();
+            movieAdapter.notifyDataSetChanged();
+            MainActivity.prefChanged = false;
         }
-
-        return super.onOptionsItemSelected(item);
     }
-*/
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        if (allowUpdate)
-            new FetchMovieTask().execute();
-
-
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-/*
-        mPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        mSortOrder = mPrefs.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_key_default));
 
-        Log.d(LOG_TAG, "mSortOrder : " + mSortOrder.toString());
-        new FetchMovieTask().execute(new String[]{mSortOrder});
+        //mPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        //mSortOrder = mPrefs.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_key_default));
+        //Log.d(LOG_TAG, "mSortOrder onCreateView: " + mSortOrder.toString());
+        //new FetchMovieTask().execute(mSortOrder);
 
-*/
-        //new FetchMovieTask().execute();
         GridView gridView = (GridView)rootView.findViewById(R.id.movies_list_gridView);
         movieAdapter = new PopMovieAdapter(getActivity(), movies);
         gridView.setAdapter(movieAdapter);
@@ -90,25 +89,25 @@ public class MainActivityFragment extends Fragment {
 
     }
 
-    public class FetchMovieTask extends AsyncTask<Void, Void, Void> {
+    public class FetchMovieTask extends AsyncTask<String, Void, Void> {
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
         String moviesJsonStr = null;
 
-    @Override
-        protected Void doInBackground(Void... params) {
+        @Override
+        protected Void doInBackground(String... params) {
 
             Log.d(LOG_TAG, "Requesting movies List... ");
             Uri builtUri = Uri.parse(getString(R.string.BASE_URL))
                     .buildUpon()
                     .appendQueryParameter(getString(R.string.API_KEY_PARAM), getString(R.string.API_KEY))
                     .appendQueryParameter(getString(R.string.LANGUAGE_PARAM), getString(R.string.LANGUAGE_EN_PARAM))
-                    .appendQueryParameter(getString(R.string.SORT_PARAM), getString(R.string.POPULARITY_PARAM)
-                    //.appendQueryParameter(getString(R.string.SORT_PARAM), params[0]
+                    //.appendQueryParameter(getString(R.string.SORT_PARAM), getString(R.string.POPULARITY_PARAM)
+                    .appendQueryParameter(getString(R.string.SORT_PARAM), params[0]
                     +  getString(R.string.SORT_DESC_PARAM))
                     .build();
 
-//            Log.d(LOG_TAG, "URI "+ builtUri.toString());
+            Log.d(LOG_TAG, "URI "+ builtUri.toString());
 
             try {
                 URL url = new URL(builtUri.toString());
@@ -150,6 +149,8 @@ public class MainActivityFragment extends Fragment {
         Log.v(LOG_TAG, "Movies Json String : " + moviesJsonStr);
 
         extractFromJSON(moviesJsonStr);
+
+        moviesJsonStr = null;
 
         return null;
         }
