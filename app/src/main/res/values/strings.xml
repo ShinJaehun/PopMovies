@@ -28,5 +28,7 @@
     <string name="VOTE_COUNT_PARAM">vote_count</string>
     <string name="LANGUAGE_PARAM">language</string>
     <string name="LANGUAGE_EN_PARAM">en</string>
+    <string name="title_activity_detail">DetailActivity</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>

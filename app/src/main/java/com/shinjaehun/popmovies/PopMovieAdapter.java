@@ -17,7 +17,7 @@ import java.util.List;
 public class PopMovieAdapter extends ArrayAdapter<PopMovie> {
     Context context;
     LayoutInflater inflater;
-    public final String LOG_TAG = PopMovieAdapter.class.getSimpleName();
+    //public final String LOG_TAG = PopMovieAdapter.class.getSimpleName();
 
     public PopMovieAdapter(Context context, List<PopMovie> objects) {
         super(context, R.layout.list_item_movie_image, objects);

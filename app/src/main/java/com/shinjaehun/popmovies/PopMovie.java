@@ -1,6 +1,8 @@
 package com.shinjaehun.popmovies;
 
-public class PopMovie {
+import java.io.Serializable;
+
+public class PopMovie implements Serializable {
 
     String title;
     String poster_Location;

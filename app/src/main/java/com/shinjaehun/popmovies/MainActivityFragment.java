@@ -14,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
 import org.json.JSONArray;
@@ -51,8 +52,8 @@ public class MainActivityFragment extends Fragment {
         super.onCreate(savedInstanceState);
         //setHasOptionsMenu(true);
         mPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        mSortOrder = mPrefs.getString("sortBy", "popularity");
-        Log.d(LOG_TAG, "mSortOrder onCreateView: " + mSortOrder.toString());
+        mSortOrder = mPrefs.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_key_default));
+        Log.d(LOG_TAG, "mSortOrder onCreateView: " + mSortOrder);
         new FetchMovieTask().execute(mSortOrder);
     }
 
@@ -61,8 +62,8 @@ public class MainActivityFragment extends Fragment {
         super.onResume();
         if (MainActivity.prefChanged) {
             //mPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            mSortOrder = mPrefs.getString("sortBy", "popularity");
-            Log.d(LOG_TAG, "mSortOrder onResume: " + mSortOrder.toString());
+            mSortOrder = mPrefs.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_key_default));
+            Log.d(LOG_TAG, "mSortOrder onResume: " + mSortOrder);
             new FetchMovieTask().execute(mSortOrder);
             movieAdapter.clear();
             movieAdapter.notifyDataSetChanged();
@@ -84,6 +85,15 @@ public class MainActivityFragment extends Fragment {
         GridView gridView = (GridView)rootView.findViewById(R.id.movies_list_gridView);
         movieAdapter = new PopMovieAdapter(getActivity(), movies);
         gridView.setAdapter(movieAdapter);
+
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent i = new Intent(getActivity(), DetailActivity.class);
+                i.putExtra(Intent.EXTRA_TEXT, movies.get(position));
+                startActivity(i);
+            }
+        });
 
         return rootView;
 
@@ -187,7 +197,7 @@ public class MainActivityFragment extends Fragment {
             e.printStackTrace();
         }
 
-        Log.d(LOG_TAG, "Title in movies : " + movies.get(0).title.toString());
+        Log.d(LOG_TAG, "Title in movies : " + movies.get(0).title);
         return null;
     }
 }
