@@ -17,18 +17,21 @@
         android:layout_width="wrap_content"
         android:layout_height="150dp"
         android:id="@+id/imageView_poster"
-        android:layout_marginTop="146dp"
+        android:layout_marginTop="166dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="16dp" />
 
+    <!--
+    android:layout_marginTop="146dp"
+    -->
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Movie Title"
         android:id="@+id/textView_movie_title"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_below="@+id/imageView_backdrop"
         android:layout_toRightOf="@+id/imageView_poster"
         android:layout_toEndOf="@+id/imageView_poster" />
@@ -47,7 +50,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="5.0/10"
         android:id="@+id/textView_rating"
         android:layout_below="@+id/textView_release_date"
